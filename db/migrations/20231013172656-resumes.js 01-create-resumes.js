@@ -2,32 +2,15 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("job_applications", {
+    await queryInterface.createTable("resumes", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      company_name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      job_title: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      job_description: {
+      resume_content: {
         type: Sequelize.TEXT,
-        allowNull: false,
-      },
-
-      resume_id: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "resumes",
-          key: "id",
-        },
         allowNull: false,
       },
       created_at: {
@@ -42,6 +25,6 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.dropTable("job_applications");
+    await queryInterface.dropTable("resumes");
   },
 };
