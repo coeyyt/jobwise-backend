@@ -2,14 +2,12 @@
 
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Resume extends Model {
+  class User extends Model {
     static associate(models) {
-      this.hasMany(models.job_application);
-      this.hasMany(models.customized_resume);
-      this.belongsTo(models.user, { foreignKey: "user_auth0_user_id" });
+      User.hasOne(models.resume, { foreignKey: "user_auth0_user_id" });
     }
   }
-  Resume.init(
+  User.init(
     {
       id: {
         allowNull: false,
@@ -18,17 +16,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
       },
 
-      resume_content: {
-        type: DataTypes.TEXT,
+      auth0_user_id: {
+        type: DataTypes.STRING,
+        unique: true,
         allowNull: false,
       },
-
-      user_auth0_user_id: {
+      email: {
         type: DataTypes.STRING,
-        references: {
-          model: "user",
-          key: "auth0_user_id",
-        },
+        unique: true,
         allowNull: false,
       },
       created_at: {
@@ -45,9 +40,9 @@ module.exports = (sequelize, DataTypes) => {
 
     {
       sequelize,
-      modelName: "resume",
+      modelName: "user",
       underscored: true,
     }
   );
-  return Resume;
+  return User;
 };

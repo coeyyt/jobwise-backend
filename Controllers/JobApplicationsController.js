@@ -2,10 +2,12 @@ const BaseController = require("./BaseController");
 const { generateCustomizedResume } = require("../openai");
 
 class JobApplicationsController extends BaseController {
-  constructor(model, resumeModel, customized_resumeModel) {
+  constructor(model, resumeModel, customized_resumeModel, userModel) {
     super(model);
     this.resumeModel = resumeModel;
     this.customizedResumeModel = customized_resumeModel;
+    this.userModel = userModel;
+    this.getallJobApplication = this.getallJobApplication.bind(this);
   }
   // // add job application
   // async addJobApplication(req, res) {
@@ -36,86 +38,6 @@ class JobApplicationsController extends BaseController {
     }
   }
 
-  //get 1 job application and its related resume content to prompt chatpgt
-  //   async getallJobApplication(req, res) {
-  //     try {
-  //       const JD = await this.model.findOne({
-  //         attributes: ["company_name", "job_title", "job_description"],
-  //         include: {
-  //           model: this.resumeModel, // Include the resume model to get the resume_content
-  //           required: true,
-  //           attributes: ["resume_content"],
-  //         },
-  //       });
-  //       // Construct the prompt for OpenAI ChatGPT
-  //       const promptContent = `
-  //   Resume Content: ${JD.resume.resume_content}
-  //   Company Name: ${JD.company_name}
-  //   Job Title: ${JD.job_title}
-  //   Job Description: ${JD.job_description}
-  //   Please generate a customized resume based on the above data.
-  // `;
-
-  //       // Get the customized resume from OpenAI ChatGPT
-  //       const customizedResume = await generateCustomizedResume(promptContent);
-
-  //       // Respond with both the fetched data and the generated resume
-  //       res.json({
-  //         jobApplication: JD,
-  //         customizedResume: customizedResume,
-  //       });
-  //     } catch (err) {
-  //       console.error("Error in getJobApplication", err);
-  //       res.status(400).json({ error: true, msg: err.message });
-  //     }
-  //   }
-
-  //   async getallJobApplication(req, res) {
-  //     try {
-  //       const JD = await this.model.findOne({
-  //         attributes: ["company_name", "job_title", "job_description", "id"],
-  //         include: {
-  //           model: this.resumeModel, // Include the resume model to get the resume_content
-  //           required: true,
-  //           attributes: ["resume_content", "id"],
-  //         },
-  //       });
-  //       // Construct the prompt for OpenAI ChatGPT
-  //       const promptContent = `
-  //   Resume Content: ${JD.resume.resume_content}
-  //   Company Name: ${JD.company_name}
-  //   Job Title: ${JD.job_title}
-  //   Job Description: ${JD.job_description}
-  //   Please generate a customized resume based on the above data.
-  // `;
-
-  //       // Get the customized resume from OpenAI ChatGPT
-  //       const customizedResume = await generateCustomizedResume(promptContent);
-  //       const resumeContentString = customizedResume.content;
-
-  //       const newCustomizedResume = await this.customizedResumeModel.create({
-  //         content: resumeContentString,
-  //         job_application_id: JD.id,
-  //         resume_id: JD.resume.id,
-  //         created_at: new Date(),
-  //         updated_at: new Date(),
-  //       });
-
-  //       // Respond with both the fetched data and the generated resume
-  //       res.json({
-  //         jobApplication: JD,
-  //         customizedResume: customizedResume,
-  //         savedCustomizedResume: newCustomizedResume,
-  //       });
-  //     } catch (err) {
-  //       console.error("Error in getJobApplication", err);
-  //       res.status(400).json({ error: true, msg: err.message });
-  //     }
-  //   }
-
-  // Assuming we have an import or a method for generateCustomizedResume
-  // and necessary imports for database models and utility methods.
-
   async addAndGenerateCustomResume(req, res) {
     const { company_name, job_title, job_description, resume_id } = req.body;
     try {
@@ -140,12 +62,12 @@ class JobApplicationsController extends BaseController {
 
       // 3. Construct the prompt for OpenAI ChatGPT
       const promptContent = `
-Resume Content: ${JD.resume.resume_content}
-Company Name: ${JD.company_name}
-Job Title: ${JD.job_title}
-Job Description: ${JD.job_description}
-Please generate a customized resume based on the above data.
-`;
+  Resume Content: ${JD.resume.resume_content}
+  Company Name: ${JD.company_name}
+  Job Title: ${JD.job_title}
+  Job Description: ${JD.job_description}
+  Please generate a customized resume based on the above data.
+  `;
 
       // 4. Get the customized resume from OpenAI ChatGPT
       const customizedResume = await generateCustomizedResume(promptContent);

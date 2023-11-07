@@ -13,14 +13,14 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-      // user_id: {
-      //   type: Sequelize.INTEGER,
-      //   references: {
-      //     model: "users",
-      //     key: "id",
-      //   },
-      //   allowNull: false,
-      // },
+      user_auth0_user_id: {
+        type: Sequelize.STRING,
+        references: {
+          model: "users",
+          key: "auth0_user_id",
+        },
+        allowNull: false,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,

@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
       },
       job_title: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false,
       },
       job_description: {
@@ -30,6 +30,7 @@ module.exports = {
         },
         allowNull: false,
       },
+
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
