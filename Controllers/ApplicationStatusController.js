@@ -1,6 +1,7 @@
 "use strict";
 
 const BaseController = require("./BaseController");
+const Sequelize = require("sequelize"); // Import Sequelize
 
 class ApplicationStatusController extends BaseController {
   constructor(model) {
@@ -45,6 +46,9 @@ class ApplicationStatusController extends BaseController {
   // Method to get the current status of an application
   getStatus = async (req, res) => {
     const { job_application_id, user_auth0_user_id } = req.params;
+    console.log(
+      `Received params - Job Application ID: ${job_application_id}, User Auth0 User ID: ${user_auth0_user_id}`
+    );
 
     try {
       const application = await this.model.findOne({
@@ -60,6 +64,29 @@ class ApplicationStatusController extends BaseController {
       }
 
       res.status(200).json({ application });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Internal server error", error: error.message });
+    }
+  };
+  // Method to get the count of applications by status for a specific user
+  getApplicationStatusCounts = async (req, res) => {
+    const { user_auth0_user_id } = req.params;
+
+    try {
+      const statusCounts = await this.model.findAll({
+        where: {
+          user_auth0_user_id: user_auth0_user_id,
+        },
+        attributes: [
+          "status",
+          [Sequelize.fn("COUNT", Sequelize.col("status")), "count"],
+        ],
+        group: ["status"],
+      });
+
+      res.status(200).json({ statusCounts });
     } catch (error) {
       res
         .status(500)

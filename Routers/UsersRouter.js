@@ -6,9 +6,7 @@ class UserRouter {
   }
   routes() {
     const router = this.express.Router();
-    // router.post("/", this.checkJwt, (req, res) => {
-    //   this.controller.registerOrUpdateUser(req, res);
-    // });
+
 
     // Bind the controller methods to the correct context
     const boundRegisterOrUpdateUser = this.controller.registerOrUpdateUser.bind(

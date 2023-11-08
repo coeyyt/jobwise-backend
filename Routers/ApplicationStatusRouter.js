@@ -16,6 +16,12 @@ class ApplicationStatusRouter {
         this.controller.getStatus(req, res);
       }
     );
+
+    //route for getting application status counts for a user
+    router.get("/getStatusCounts/:user_auth0_user_id", (req, res) => {
+      this.controller.getApplicationStatusCounts(req, res);
+    });
+
     return router;
   }
 }
