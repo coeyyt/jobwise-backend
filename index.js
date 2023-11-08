@@ -5,7 +5,8 @@ const { auth } = require("express-oauth2-jwt-bearer");
 
 const db = require("./db/models/index");
 
-const { resume, job_application, customized_resume, user } = db;
+const { resume, job_application, customized_resume, user, application_status } =
+  db;
 const UsersRouter = require("./Routers/UsersRouter");
 const UsersController = require("./Controllers/UsersController");
 const ResumesRouter = require("./Routers/ResumesRouter");
@@ -14,6 +15,8 @@ const JobApplicationsRouter = require("./Routers/JobApplicationsRouter");
 const JobApplicationsController = require("./Controllers/JobApplicationsController");
 const CustomizedResumesRouter = require("./Routers/CustomizedResumesRouter");
 const CustomizedResumesController = require("./Controllers/CustomizedResumesController");
+const ApplicationStatusRouter = require("./Routers/ApplicationStatusRouter");
+const ApplicationStatusController = require("./Controllers/ApplicationStatusController");
 const PORT = process.env.PORT || 3000;
 
 const app = express();
@@ -24,18 +27,6 @@ const checkJwt = auth({
   audience: process.env.API_AUDIENCE,
   issuerBaseURL: process.env.API_ISSUERBASEURL,
 });
-
-const checkJwtWithLogging = (req, res, next) => {
-  console.log("checkJwt middleware called");
-  checkJwt(req, res, (err) => {
-    if (err) {
-      console.error("Error in checkJwt:", err);
-      return next(err);
-    }
-    console.log("req.user:", req.user);
-    next();
-  });
-};
 
 const usersController = new UsersController(user);
 const usersRouter = new UsersRouter(
@@ -57,8 +48,7 @@ const jobApplicationsController = new JobApplicationsController(
 const jobApplicationsRouter = new JobApplicationsRouter(
   express,
   jobApplicationsController,
-  checkJwt,
-  checkJwtWithLogging
+  checkJwt
 ).routes();
 const customizedResumesController = new CustomizedResumesController(
   customized_resume
@@ -68,6 +58,14 @@ const customizedResumesRouter = new CustomizedResumesRouter(
   customizedResumesController
 ).routes();
 
+const applicationStatusController = new ApplicationStatusController(
+  application_status
+);
+const applicationStatusRouter = new ApplicationStatusRouter(
+  express,
+  applicationStatusController
+).routes();
+
 app.use(cors());
 app.use(express.json());
 
@@ -75,6 +73,7 @@ app.use("/resumes", resumesRouter);
 app.use("/jobapplications", jobApplicationsRouter);
 app.use("/customizedresumes", customizedResumesRouter);
 app.use("/users", usersRouter);
+app.use("/status", applicationStatusRouter);
 
 app.listen(PORT, () => {
   console.log("Application listening to port 3000");

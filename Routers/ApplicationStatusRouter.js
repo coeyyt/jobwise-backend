@@ -11,7 +11,7 @@ class ApplicationStatusRouter {
     });
 
     router.get(
-      "/getStatus/:jobApplicationId/:user_auth0_user_id",
+      "/getStatus/:job_application_id/:user_auth0_user_id",
       (req, res) => {
         this.controller.getStatus(req, res);
       }

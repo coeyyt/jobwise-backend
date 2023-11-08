@@ -9,47 +9,50 @@ class ApplicationStatusController extends BaseController {
 
   // Method to update application status
   updateStatus = async (req, res) => {
-    try {
-      const { status, jobApplicationId } = req.body;
-      const userId = req.user.id; // Assuming user ID is available in req.user
+    const { status, job_application_id, user_auth0_user_id } = req.body;
 
-      // Find the application
-      const application = await this.model.findOne({
+    try {
+      let application_status = await this.model.findOne({
         where: {
-          job_application_id: jobApplicationId,
-          user_auth0_user_id: userId,
+          job_application_id: job_application_id,
+          user_auth0_user_id: user_auth0_user_id,
         },
       });
 
-      if (!application) {
-        return res.status(404).json({ message: "Application not found" });
+      if (application_status) {
+        // Update existing status
+        application_status.status = status;
+        await application_status.save();
+        return res
+          .status(200)
+          .json({ message: "status updated successfully", application_status });
+      } else {
+        // Create new resume
+        application_status = await this.model.create({
+          status,
+          job_application_id,
+          user_auth0_user_id,
+        });
+        return res
+          .status(201)
+          .json({ message: "Resume created successfully", application_status });
       }
-
-      // Update the status
-      application.status = status;
-      await application.save();
-
-      res
-        .status(200)
-        .json({ message: "Status updated successfully", application });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Internal server error", error: error.message });
+    } catch (err) {
+      return res.status(500).json({ error: true, message: err.message });
     }
   };
 
   // Method to get the current status of an application
   getStatus = async (req, res) => {
-    try {
-      const { jobApplicationId } = req.params;
-      const userId = req.user.id;
+    const { job_application_id, user_auth0_user_id } = req.params;
 
+    try {
       const application = await this.model.findOne({
         where: {
-          job_application_id: jobApplicationId,
-          user_auth0_user_id: userId,
+          job_application_id: job_application_id,
+          user_auth0_user_id: user_auth0_user_id,
         },
+        attributes: ["status"],
       });
 
       if (!application) {
