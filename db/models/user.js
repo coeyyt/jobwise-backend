@@ -5,6 +5,16 @@ module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
       User.hasOne(models.resume, { foreignKey: "user_auth0_user_id" });
+      User.hasMany(models.customized_resume, {
+        foreignKey: "user_auth0_user_id",
+      });
+      User.hasMany(models.job_application, {
+        foreignKey: "user_auth0_user_id",
+      });
+
+      User.hasMany(models.application_status, {
+        foreignKey: "user_auth0_user_id",
+      });
     }
   }
   User.init(

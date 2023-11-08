@@ -90,6 +90,28 @@ class ResumesController extends BaseController {
       res.status(500).json({ error: true, msg: "Internal server error" });
     }
   }
+
+  async updateResume(req, res) {
+    const { resume_content } = req.body;
+    const resumeId = req.params.resumeId;
+
+    try {
+      let resume = await this.model.findByPk(resumeId);
+
+      if (!resume) {
+        return res.status(404).json({ error: true, msg: "Resume not found" });
+      }
+
+      resume.resume_content = resume_content;
+      await resume.save();
+      return res
+        .status(200)
+        .json({ message: "Resume updated successfully", resume });
+    } catch (err) {
+      console.error("Error in updateResume:", err);
+      res.status(500).json({ error: true, message: err.message });
+    }
+  }
 }
 
 module.exports = ResumesController;

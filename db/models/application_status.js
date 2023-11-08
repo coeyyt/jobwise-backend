@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       this.belongsTo(models.job_application);
+      this.belongsTo(models.user, { foreignKey: "user_auth0_user_id" });
     }
   }
   Application_Status.init(
@@ -32,7 +33,14 @@ module.exports = (sequelize, DataTypes) => {
         },
         allowNull: false,
       },
-
+      user_auth0_user_id: {
+        type: DataTypes.STRING,
+        references: {
+          model: "user",
+          key: "auth0_user_id",
+        },
+        allowNull: false,
+      },
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,

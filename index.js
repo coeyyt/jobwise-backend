@@ -23,8 +23,19 @@ console.log("API_ISSUERBASEURL:", process.env.API_ISSUERBASEURL);
 const checkJwt = auth({
   audience: process.env.API_AUDIENCE,
   issuerBaseURL: process.env.API_ISSUERBASEURL,
-  scope: "openid profile email",
 });
+
+const checkJwtWithLogging = (req, res, next) => {
+  console.log("checkJwt middleware called");
+  checkJwt(req, res, (err) => {
+    if (err) {
+      console.error("Error in checkJwt:", err);
+      return next(err);
+    }
+    console.log("req.user:", req.user);
+    next();
+  });
+};
 
 const usersController = new UsersController(user);
 const usersRouter = new UsersRouter(
@@ -46,7 +57,8 @@ const jobApplicationsController = new JobApplicationsController(
 const jobApplicationsRouter = new JobApplicationsRouter(
   express,
   jobApplicationsController,
-  checkJwt
+  checkJwt,
+  checkJwtWithLogging
 ).routes();
 const customizedResumesController = new CustomizedResumesController(
   customized_resume

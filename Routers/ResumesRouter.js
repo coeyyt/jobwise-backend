@@ -6,8 +6,6 @@ class ResumesRouter {
   }
   routes() {
     const router = this.express.Router();
-    // user to post resume
-    // router.post("/", this.controller.uploadResume.bind(this.controller));
 
     router.post("/", (req, res) => {
       this.controller.uploadResume(req, res);
@@ -27,8 +25,12 @@ class ResumesRouter {
     //get resume_id by auth0userId
     router.get("/id/user/:auth0UserId", (req, res) => {
       console.log("Auth0 User ID:", req.params.auth0UserId); // Check if this logs correctly
-
       this.controller.getResumeIDByAuth0UserId(req, res);
+    });
+
+    // Route for updating a resume
+    router.put("/:resumeId", (req, res) => {
+      this.controller.updateResume(req, res);
     });
     return router;
   }

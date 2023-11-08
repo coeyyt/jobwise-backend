@@ -7,7 +7,6 @@ class JobApplicationsController extends BaseController {
     this.resumeModel = resumeModel;
     this.customizedResumeModel = customized_resumeModel;
     this.userModel = userModel;
-    this.getallJobApplication = this.getallJobApplication.bind(this);
   }
   // // add job application
   // async addJobApplication(req, res) {
@@ -25,21 +24,42 @@ class JobApplicationsController extends BaseController {
   //   }
   // }
 
-  // get all job applicaitons
-  async getallJobApplication(req, res) {
+  // // get all job applicaitons
+  // async getallJobApplication(req, res) {
+  //   try {
+  //     const output = await this.model.findAll({
+  //       attributes: ["id", "company_name", "job_title", "job_description"],
+  //     });
+  //     res.json(output);
+  //   } catch (err) {
+  //     console.error("Error in getJobApplication", err);
+  //     res.status(400).json({ error: true, msg: err.message });
+  //   }
+  // }
+
+  async getJobApplicationByAuth0UserId(req, res) {
+    const user_auth0_user_id = req.params.auth0UserId;
+
     try {
       const output = await this.model.findAll({
+        where: { user_auth0_user_id: user_auth0_user_id },
         attributes: ["id", "company_name", "job_title", "job_description"],
       });
       res.json(output);
     } catch (err) {
-      console.error("Error in getJobApplication", err);
+      console.error("Error in getallJobApplication", err);
       res.status(400).json({ error: true, msg: err.message });
     }
   }
 
   async addAndGenerateCustomResume(req, res) {
-    const { company_name, job_title, job_description, resume_id } = req.body;
+    const {
+      company_name,
+      job_title,
+      job_description,
+      resume_id,
+      user_auth0_user_id,
+    } = req.body;
     try {
       // 1. Add the job application to the database
       const jobApplication = await this.model.create({
@@ -47,6 +67,7 @@ class JobApplicationsController extends BaseController {
         job_title: job_title,
         job_description: job_description,
         resume_id: resume_id,
+        user_auth0_user_id: user_auth0_user_id,
       });
 
       // 2. Fetch the job application with the related resume
@@ -78,6 +99,7 @@ class JobApplicationsController extends BaseController {
         content: resumeContentString,
         job_application_id: JD.id,
         resume_id: JD.resume.id,
+        user_auth0_user_id: user_auth0_user_id, // Save the user's Auth0 ID here
         created_at: new Date(),
         updated_at: new Date(),
       });

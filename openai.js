@@ -1,7 +1,7 @@
 const OpenAIApi = require("openai");
 
 const openai = new OpenAIApi({
-  key: "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",
+  key: "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",
 });
 async function generateCustomizedResume(promptContent) {
   try {

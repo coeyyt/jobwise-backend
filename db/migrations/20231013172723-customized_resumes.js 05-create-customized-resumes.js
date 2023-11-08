@@ -29,6 +29,15 @@ module.exports = {
         },
         allowNull: false,
       },
+
+      user_auth0_user_id: {
+        type: Sequelize.STRING,
+        references: {
+          model: "users",
+          key: "auth0_user_id",
+        },
+        allowNull: false,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,

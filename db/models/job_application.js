@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.resume);
       this.hasOne(models.customized_resume);
       this.hasOne(models.application_status);
+      this.belongsTo(models.user, { foreignKey: "user_auth0_user_id" });
     }
   }
   Job_Application.init(
@@ -40,6 +41,14 @@ module.exports = (sequelize, DataTypes) => {
         references: {
           model: "resume",
           key: "id",
+        },
+        allowNull: false,
+      },
+      user_auth0_user_id: {
+        type: DataTypes.STRING,
+        references: {
+          model: "user",
+          key: "auth0_user_id",
         },
         allowNull: false,
       },

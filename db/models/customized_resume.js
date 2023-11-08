@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       this.belongsTo(models.job_application);
       this.belongsTo(models.resume);
+      this.belongsTo(models.user, { foreignKey: "user_auth0_user_id" });
     }
   }
   Customized_Resume.init(
@@ -42,6 +43,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
 
+      user_auth0_user_id: {
+        type: DataTypes.STRING,
+        references: {
+          model: "user",
+          key: "auth0_user_id",
+        },
+        allowNull: false,
+      },
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,
